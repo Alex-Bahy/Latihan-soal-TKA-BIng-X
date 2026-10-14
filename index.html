@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan Soal TKA Bahasa Inggris - Kelas X</title>
+<style>
+:root{--p:#0f4c5c;--pl:#e3f0f2;--bg:#f4f6f5;--t:#14232b;--m:#5b6b73;--ok:#2f855a;--w:#c2410c;--ln:#d5dcdf}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 Georgia,"Times New Roman",serif;background:var(--bg);color:var(--t);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,select,button{font:inherit}
+input[type=text],input[type=tel],select{-webkit-user-select:text;user-select:text}
+.w{max-width:720px;margin:0 auto;padding:12px}
+.card{background:#fff;border:1px solid var(--ln);border-radius:10px;padding:18px;margin:12px 0}
+h1{font-size:1.35rem;line-height:1.3;margin:0 0 4px}
+label.f{display:block;font-weight:700;margin:12px 0 4px}
+input[type=text],input[type=tel],select{width:100%;padding:12px;border:1px solid #a9b6bb;border-radius:8px;background:#fff}
+button{padding:12px 20px;border:0;border-radius:8px;background:var(--p);color:#fff;cursor:pointer;min-height:46px}
+button.s{background:#e4e9eb;color:var(--t)}button:disabled{opacity:.5}
+.hd{position:sticky;top:0;background:var(--p);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;z-index:5;font-size:.9rem}
+#tm{font-weight:700;font-size:1.25rem;font-variant-numeric:tabular-nums}.low{color:#fcd34d}.crit{color:#fca5a5}
+.st{background:var(--pl);border-left:4px solid var(--p);padding:10px 14px;border-radius:4px;white-space:pre-line;margin-bottom:14px}
+.op{display:flex;gap:12px;align-items:center;padding:12px;border:2px solid var(--ln);border-radius:8px;margin:8px 0;cursor:pointer;font-weight:400}
+.op.on{border-color:var(--p);background:var(--pl)}
+.op input,td input{width:22px;height:22px;flex:none;accent-color:var(--p)}
+table{width:100%;border-collapse:collapse}td,th{padding:10px 6px;border-bottom:1px solid var(--ln);text-align:center}td:first-child,th:first-child{text-align:left}
+.nv{display:flex;gap:8px;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
+.gr{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.gr b{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#e4e9eb;cursor:pointer}
+.gr b.d{background:var(--ok);color:#fff}.gr b.r{background:#d69e2e;color:#fff}.gr b.c{outline:3px solid var(--p)}
+#ov{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
+#ov>div{background:#fff;border-radius:10px;padding:20px;max-width:440px;width:100%}
+#wm{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.08}
+.err{color:var(--w);margin-top:10px}
+@media print{body{display:none}}
+</style></head><body>
+<div id="wm"></div><div id="ov"><div id="ovb"></div></div><div id="app"></div>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwiNc8DWhYz-OCYdfHKAiI7ghl062OYSGoW3hXcrSf3p7dDGLR-nS7n0FUxyzCBnZTjxA/exec"; // <-- tempel URL deployment Apps Script
+const $ = s => document.querySelector(s);
+const S = { run: false, jaw: {}, ragu: {}, idx: 0, pel: 0, items: [] };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cur = () => S.items[S.idx];
+
+// ---------- API dengan retry 3x ----------
+async function api(a, d) {
+  let e;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: a, sid: S.sid, nis: S.nis, ...d }) });
+      return await r.json();
+    } catch (x) { e = x; await new Promise(r => setTimeout(r, 800 * (i + 1))); }
+  }
+  throw e;
+}
+
+// ---------- Acak per siswa (seed NIS) ----------
+const seedOf = s => { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+const rng = a => () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+function shuf(a, r) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function susun(grup) {
+  const r = rng(seedOf(S.nis)), it = [];
+  shuf(grup, r).forEach(g => shuf(g.q, r).forEach(q => {
+    const o = { ...q, s: g.s };
+    o.ord = q.tipe === "C" ? shuf(q.p.map((_, i) => i), r) : shuf(Object.keys(q.opsi), r);
+    it.push(o);
+  }));
+  return it;
+}
+
+// ---------- Login ----------
+function login(msg) {
+  $("#app").innerHTML = `<div class="w"><div class="card"><h1>Latihan Soal TKA Bahasa Inggris</h1>
+  <p style="color:var(--m);margin:0">Kelas X SMK</p>
+  <label class="f">Nama lengkap</label><input type="text" id="n" autocomplete="off">
+  <label class="f">NIS</label><input type="tel" id="i" autocomplete="off">
+  <label class="f">Kelas</label><select id="k"><option>X</option></select>
+  <label class="f">Jurusan</label><input type="text" id="j" placeholder="mis. AKL, MPLB, ULP" autocomplete="off">
+  <label class="f">Token ujian</label><input type="text" id="t" autocomplete="off">
+  <div class="st" style="margin-top:16px"><b>Aturan ujian</b>
+Ujian berjalan dalam layar penuh. Jangan pindah tab atau aplikasi.
+Pelanggaran berulang membuat ujian otomatis dikumpulkan.
+Copy, paste, dan klik kanan dinonaktifkan. Urutan soal diacak.
+Waktu dihitung server dan hanya ada satu kali percobaan.</div>
+  <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="c" style="width:22px;height:22px"> Saya mengerti dan setuju</label>
+  <button id="go" style="width:100%;margin-top:14px">Mulai ujian</button><div id="er" class="err">${esc(msg || "")}</div></div></div>`;
+  $("#go").onclick = mulai;
+}
+
+async function mulai() {
+  const v = id => $("#" + id).value.trim(), er = m => { $("#er").textContent = m; };
+  const nama = v("n"), nis = v("i"), jur = v("j"), token = v("t");
+  if (!nama || !nis || !jur || !token) return er("Lengkapi semua kolom.");
+  if (!$("#c").checked) return er("Centang persetujuan aturan ujian.");
+  S.nama = nama; S.nis = nis; S.kelas = v("k") + " " + jur;
+  S.fs = 0;
+  if (document.documentElement.requestFullscreen) { try { await document.documentElement.requestFullscreen(); S.fs = 1; } catch (e) {} }
+  $("#go").disabled = true; er("Memuat soal...");
+  try {
+    const r = await api("mulai", { nama, kelas: S.kelas, token, ua: navigator.userAgent });
+    if (!r.ok) { if (document.fullscreenElement) document.exitFullscreen(); $("#go").disabled = false; return er(r.msg); }
+    S.sid = r.sid; S.offset = r.now - Date.now(); S.end = r.mulai + r.durasi * 60000; S.m = r.mulai;
+    S.cfg = { nav: r.nav, maks: r.maks };
+    S.items = susun(r.soal);
+    let L = {}; try { L = JSON.parse(localStorage.getItem("tka_" + nis)) || {}; } catch (e) {}
+    if (L.m !== r.mulai) L = {};
+    S.jaw = { ...(r.jawaban || {}), ...(L.jaw || {}) }; S.ragu = L.ragu || {};
+    S.idx = Math.min(L.idx || 0, S.items.length - 1); S.pel = Math.max(r.pel || 0, L.pel || 0);
+    wm(); S.run = true; tampil(); tick();
+    S.tk = setInterval(tick, 1000); S.sy = setInterval(sinkron, 30000);
+    if (S.pel >= S.cfg.maks) kirim("pelanggaran");
+  } catch (e) { $("#go").disabled = false; er("Koneksi gagal. Periksa internet lalu coba lagi."); }
+}
+
+// ---------- Tampilan soal ----------
+function lengkap(q) {
+  const a = S.jaw[q.no];
+  if (q.tipe === "A") return !!a;
+  if (q.tipe === "B") return !!a && a.length === q.n;
+  const c = a || []; return q.p.every((_, i) => c[i]);
+}
+function tampil() {
+  const q = cur(), n = S.items.length, nav = S.cfg.nav;
+  let h = `<div class="hd"><span>${esc(S.nama)}</span><span>Soal ${S.idx + 1}/${n}</span><span id="tm"></span><span id="sv" title="Status simpan">&#9679;</span></div><div class="w"><div class="card">`;
+  if (q.s) h += `<div class="st">${esc(q.s)}</div>`;
+  if (q.img) h += `<img src="${esc(q.img)}" alt="Infografis Our Dreams, Our Future" draggable="false" onclick="zoom(this.src)" style="width:100%;border:1px solid var(--ln);border-radius:8px;cursor:zoom-in"><p style="color:var(--m);font-size:.85rem;margin:4px 0 12px">Ketuk gambar untuk memperbesar.</p>`;
+  h += `<p><b>${S.idx + 1}.</b> ${esc(q.teks)}</p>`;
+  if (q.tipe === "C") {
+    const a = S.jaw[q.no] || [];
+    h += `<table><tr><th></th><th>${q.label[0]}</th><th>${q.label[1]}</th></tr>` + q.ord.map(i =>
+      `<tr><td>${esc(q.p[i])}</td>` + [0, 1].map(j => `<td><input type="radio" name="r${i}" ${a[i] === q.label[j] ? "checked" : ""} onchange="pilihC(${i},${j})"></td>`).join("") + `</tr>`).join("") + `</table>`;
+  } else {
+    const a = S.jaw[q.no];
+    h += q.ord.map((k, i) => {
+      const on = q.tipe === "A" ? a === k : (a || []).includes(k);
+      return `<label class="op ${on ? "on" : ""}"><input type="${q.tipe === "A" ? "radio" : "checkbox"}" name="o" ${on ? "checked" : ""} onchange="pilih('${k}')"><span><b>${String.fromCharCode(65 + i)}.</b> ${esc(q.opsi[k])}</span></label>`;
+    }).join("");
+    if (q.tipe === "B") h += `<p style="color:var(--m);font-size:.9rem">Pilih ${q.n} jawaban.</p>`;
+  }
+  h += `<div class="nv"><span>${nav && S.idx > 0 ? `<button class="s" onclick="ke(${S.idx - 1})">Sebelumnya</button>` : ""}</span>`;
+  if (nav) h += `<button class="s" onclick="ragu()">${S.ragu[q.no] ? "Batal ragu-ragu" : "Ragu-ragu"}</button>`;
+  h += S.idx < n - 1 ? `<button onclick="ke(${S.idx + 1})">Berikutnya</button>` : `<button onclick="konfirm()">Kumpulkan</button>`;
+  h += `</div>`;
+  if (nav) {
+    h += `<div class="gr">` + S.items.map((x, i) => `<b class="${S.ragu[x.no] ? "r" : lengkap(x) ? "d" : ""} ${i === S.idx ? "c" : ""}" onclick="ke(${i})">${i + 1}</b>`).join("") + `</div>`;
+    if (S.idx < n - 1) h += `<div class="nv"><span></span><button class="s" onclick="konfirm()">Kumpulkan sekarang</button></div>`;
+  }
+  $("#app").innerHTML = h + `</div></div>`;
+  tick();
+}
+function pilih(k) {
+  const q = cur();
+  if (q.tipe === "A") S.jaw[q.no] = k;
+  else {
+    let a = S.jaw[q.no] || [];
+    if (a.includes(k)) a = a.filter(x => x !== k);
+    else if (a.length >= q.n) return tampil();
+    else a = [...a, k];
+    S.jaw[q.no] = a;
+  }
+  lokal(); tampil();
+}
+function pilihC(i, j) {
+  const q = cur(), a = S.jaw[q.no] || [];
+  a[i] = q.label[j]; S.jaw[q.no] = a; lokal(); tampil();
+}
+function ragu() { const q = cur(); S.ragu[q.no] = !S.ragu[q.no]; lokal(); tampil(); }
+function ke(i) { S.idx = i; lokal(); tampil(); scrollTo(0, 0); }
+function lokal() { try { localStorage.setItem("tka_" + S.nis, JSON.stringify({ m: S.m, jaw: S.jaw, ragu: S.ragu, idx: S.idx, pel: S.pel })); } catch (e) {} }
+
+// ---------- Timer & sinkron ----------
+function tick() {
+  const s = Math.round((S.end - (Date.now() + S.offset)) / 1000), t = $("#tm");
+  if (S.run && s <= 0) return kirim("waktu");
+  if (!t) return;
+  const m = Math.max(0, s);
+  t.textContent = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+  t.className = s <= 60 ? "crit" : s <= 300 ? "low" : "";
+}
+function sinkron() {
+  if (!S.run) return;
+  api("simpan", { jawaban: S.jaw }).then(r => sv(r.ok)).catch(() => sv(false));
+}
+function sv(ok) { const e = $("#sv"); if (e) { e.style.color = ok ? "#86efac" : "#fca5a5"; e.title = ok ? "Tersimpan" : "Belum tersimpan (offline)"; } }
+
+// ---------- Modal ----------
+function modal(h, bt = []) {
+  const b = $("#ovb"); b.innerHTML = h;
+  bt.forEach(([t, f, s]) => { const x = document.createElement("button"); x.textContent = t; if (s) x.className = "s"; x.style.margin = "10px 8px 0 0"; x.onclick = f; b.appendChild(x); });
+  $("#ov").style.display = "flex";
+}
+const hide = () => { $("#ov").style.display = "none"; $("#ovb").parentElement.style.maxWidth = ""; };
+function zoom(src) {
+  modal(`<div style="max-height:75vh;overflow:auto"><img src="${esc(src)}" draggable="false" style="width:100%;min-width:600px"></div>`, [["Tutup", hide, 1]]);
+  $("#ovb").parentElement.style.maxWidth = "95vw";
+}
+function layarPenuh() { if (S.fs && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); }
+
+// ---------- Submit ----------
+function konfirm() {
+  const b = S.items.map((q, i) => lengkap(q) ? 0 : i + 1).filter(Boolean);
+  modal(`<p>Terjawab lengkap: <b>${S.items.length - b.length}</b> dari ${S.items.length}.</p>${b.length ? `<p>Belum lengkap: soal ${b.join(", ")}</p>` : ""}<p>Kumpulkan sekarang? Jawaban tidak bisa diubah lagi.</p>`,
+    [["Periksa lagi", hide, 1], ["Kumpulkan", () => kirim("")]]);
+}
+async function kirim(auto) {
+  if (S.sending) return;
+  S.sending = true; S.run = false; clearInterval(S.tk); clearInterval(S.sy);
+  modal(`<p>Mengirim jawaban...</p>`);
+  try {
+    const r = await api("submit", { jawaban: S.jaw, auto });
+    if (!r.ok && !r.selesai) throw new Error(r.msg);
+    try { localStorage.removeItem("tka_" + S.nis); } catch (e) {}
+    selesai(r);
+  } catch (e) {
+    S.sending = false;
+    modal(`<p class="err">Jawaban belum terkirim. Periksa koneksi lalu coba lagi. Jawaban Anda aman di perangkat ini.</p>`, [["Kirim ulang", () => kirim(auto)]]);
+  }
+}
+function selesai(r) {
+  hide(); $("#wm").style.display = "none";
+  if (document.fullscreenElement) document.exitFullscreen();
+  $("#app").innerHTML = `<div class="w"><div class="card"><h1>Terima kasih</h1><p>Jawaban Anda sudah terkirim.</p>${r.tampil ? `<p>Skor <b>${r.skor}/${r.total}</b>, nilai <b>${r.nilai}</b></p>` : ""}</div></div>`;
+}
+
+// ---------- Anti-nyontek ----------
+let lastP = 0;
+function lapor(j) {
+  if (!S.run) return;
+  const now = Date.now(); if (now - lastP < 2000) return; lastP = now;
+  S.pel++; lokal();
+  api("log", { jenis: j }).then(r => { if (r && r.pel > S.pel) S.pel = r.pel; }).catch(() => {});
+  if (S.pel >= S.cfg.maks) return kirim("pelanggaran");
+  modal(`<h2 style="color:var(--w);margin-top:0">Peringatan ${S.pel} dari ${S.cfg.maks}</h2><p>Terdeteksi: ${esc(j)}. Jika mencapai ${S.cfg.maks} pelanggaran, ujian otomatis dikumpulkan.</p>`,
+    [["Kembali ke ujian", () => { hide(); layarPenuh(); }]]);
+}
+document.addEventListener("visibilitychange", () => document.hidden && lapor("pindah tab atau aplikasi"));
+addEventListener("blur", () => lapor("jendela tidak aktif"));
+document.addEventListener("fullscreenchange", () => { if (S.run && S.fs && !document.fullscreenElement) lapor("keluar layar penuh"); });
+["contextmenu", "copy", "cut", "paste", "selectstart", "dragstart"].forEach(e => document.addEventListener(e, x => { if (S.run) { x.preventDefault(); if (e === "copy" || e === "paste" || e === "cut") lapor("copy/paste"); } }));
+addEventListener("keydown", e => {
+  if (!S.run) return;
+  const k = e.key.toLowerCase();
+  if (e.key === "F12" || ((e.ctrlKey || e.metaKey) && k.length === 1 && ("cvxapsu".includes(k) || (e.shiftKey && "ijc".includes(k))))) e.preventDefault();
+});
+addEventListener("keyup", e => { if (S.run && e.key === "PrintScreen") { try { navigator.clipboard.writeText(" "); } catch (x) {} lapor("PrintScreen"); } });
+addEventListener("beforeunload", e => { if (S.run) { e.preventDefault(); e.returnValue = ""; } });
+function wm() {
+  const t = esc(S.nama + " - " + S.nis);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170'><text x='12' y='95' font-size='16' fill='#000' transform='rotate(-25 130 85)'>${t}</text></svg>`;
+  $("#wm").style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+login();
+</script></body></html>
