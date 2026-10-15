@@ -1,56 +1,111 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e3a4a">
 <title>Latihan Soal TKA Bahasa Inggris - Kelas X</title>
 <style>
-:root{--p:#0f4c5c;--pl:#e3f0f2;--bg:#f4f6f5;--t:#14232b;--m:#5b6b73;--ok:#2f855a;--w:#c2410c;--ln:#d5dcdf}
+:root{--p:#0e3a4a;--p2:#14788a;--pl:#e6f3f5;--bg:#eef3f4;--t:#13242b;--m:#5d6f77;--ok:#238a5b;--w:#c2410c;--ln:#d3dde0;--ac:#f2b138}
 *{box-sizing:border-box}
-body{margin:0;font:16px/1.55 Georgia,"Times New Roman",serif;background:var(--bg);color:var(--t);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-input,select,button{font:inherit}
-input[type=text],input[type=tel],select{-webkit-user-select:text;user-select:text}
-.w{max-width:720px;margin:0 auto;padding:12px}
-.card{background:#fff;border:1px solid var(--ln);border-radius:10px;padding:18px;margin:12px 0}
-h1{font-size:1.35rem;line-height:1.3;margin:0 0 4px}
-label.f{display:block;font-weight:700;margin:12px 0 4px}
-input[type=text],input[type=tel],select{width:100%;padding:12px;border:1px solid #a9b6bb;border-radius:8px;background:#fff}
-button{padding:12px 20px;border:0;border-radius:8px;background:var(--p);color:#fff;cursor:pointer;min-height:46px}
-button.s{background:#e4e9eb;color:var(--t)}button:disabled{opacity:.5}
-.hd{position:sticky;top:0;background:var(--p);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;z-index:5;font-size:.9rem}
-#tm{font-weight:700;font-size:1.25rem;font-variant-numeric:tabular-nums}.low{color:#fcd34d}.crit{color:#fca5a5}
-.st{background:var(--pl);border-left:4px solid var(--p);padding:10px 14px;border-radius:4px;white-space:pre-line;margin-bottom:14px}
-.op{display:flex;gap:12px;align-items:center;padding:12px;border:2px solid var(--ln);border-radius:8px;margin:8px 0;cursor:pointer;font-weight:400}
-.op.on{border-color:var(--p);background:var(--pl)}
-.op input,td input{width:22px;height:22px;flex:none;accent-color:var(--p)}
-table{width:100%;border-collapse:collapse}td,th{padding:10px 6px;border-bottom:1px solid var(--ln);text-align:center}td:first-child,th:first-child{text-align:left}
-.nv{display:flex;gap:8px;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
-.gr{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.gr b{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#e4e9eb;cursor:pointer}
-.gr b.d{background:var(--ok);color:#fff}.gr b.r{background:#d69e2e;color:#fff}.gr b.c{outline:3px solid var(--p)}
-#ov{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
-#ov>div{background:#fff;border-radius:10px;padding:20px;max-width:440px;width:100%}
-#wm{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.08}
-.err{color:var(--w);margin-top:10px}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--t);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,select,button,textarea{font:inherit}
+input[type=text],input[type=tel],select,textarea{-webkit-user-select:text;user-select:text}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.w{max-width:760px;margin:0 auto;padding:14px 14px 90px}
+.card{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:20px;margin:14px 0;box-shadow:0 1px 2px #0e3a4a10}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 4px;letter-spacing:-.01em}
+h3{margin:0 0 8px}
+.mt{color:var(--m);font-size:.9rem;margin:6px 0}
+/* login */
+.hero{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-radius:14px;padding:24px 20px;margin-top:14px}
+.hero p{margin:6px 0 0;opacity:.85}
+.chip{display:inline-flex;gap:6px;align-items:center;font-size:.8rem;background:#ffffff22;padding:3px 10px;border-radius:99px;margin-top:12px}
+.chip i{width:8px;height:8px;border-radius:50%;background:#fcd34d;display:block}.chip.on i{background:#86efac}.chip.off i{background:#fca5a5}
+label.f{display:block;font-weight:600;margin:14px 0 5px;font-size:.92rem}
+input[type=text],input[type=tel],select,textarea{width:100%;padding:13px;border:1.5px solid #a9b9be;border-radius:10px;background:#fff;color:var(--t)}
+input[type=text]:focus,input[type=tel]:focus,select:focus{border-color:var(--p2)}
+textarea{height:96px;font:12px/1.3 ui-monospace,monospace;word-break:break-all}
+.rules{background:var(--pl);border-radius:10px;padding:12px 16px 12px 34px;margin:18px 0 12px;font-size:.9rem}
+.rules li{margin:3px 0}.rules ul,ul.rules{margin:0}
+button{padding:12px 22px;border:0;border-radius:10px;background:var(--p);color:#fff;cursor:pointer;min-height:48px;font-weight:600;transition:transform .08s}
+button:active{transform:scale(.98)}
+button.s{background:#e3eaec;color:var(--t)}button:disabled{opacity:.5}
+.big{width:100%;margin-top:10px;background:linear-gradient(135deg,var(--p),var(--p2));font-size:1.05rem}
+/* ujian */
+.hd{position:sticky;top:0;z-index:5;background:var(--p);color:#fff;padding:8px 14px calc(0px);font-size:.88rem}
+.hd>div{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:2px 0 8px}
+.hd .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:38%}
+#tm{font-weight:700;font-size:1.15rem;font-variant-numeric:tabular-nums;background:#ffffff1f;padding:2px 12px;border-radius:8px}
+.low{color:#fcd34d}.crit{color:#fecaca;animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:.55}}
+.pg{height:4px;background:#ffffff30}.pg b{display:block;height:100%;background:var(--ac);transition:width .3s}
+#sv{font-size:.75rem;opacity:.9}
+.st{background:var(--pl);border-left:4px solid var(--p2);padding:12px 16px;border-radius:6px;white-space:pre-line;margin-bottom:16px;font-size:.95rem}
+.qn{display:inline-block;background:var(--p);color:#fff;border-radius:8px;padding:1px 10px;font-weight:700;margin-right:8px}
+.q{font-size:1.06rem;margin:0 0 14px}
+.op{display:flex;gap:12px;align-items:center;padding:13px 14px;border:2px solid var(--ln);border-radius:12px;margin:9px 0;cursor:pointer;transition:border-color .12s,background .12s}
+.op:hover{border-color:#8fb7bf}.op.on{border-color:var(--p2);background:var(--pl)}
+.op input,td input{width:22px;height:22px;flex:none;accent-color:var(--p2)}
+.op b{display:inline-flex;width:26px;height:26px;border-radius:50%;background:#e3eaec;align-items:center;justify-content:center;font-size:.85rem;margin-right:8px;flex:none}
+.op.on b{background:var(--p2);color:#fff}
+.op span{display:flex;align-items:center}
+table{width:100%;border-collapse:collapse}td,th{padding:12px 6px;border-bottom:1px solid var(--ln);text-align:center;font-size:.95rem}td:first-child,th:first-child{text-align:left}th{color:var(--m);font-weight:600}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fffffff2;backdrop-filter:blur(6px);border-top:1px solid var(--ln);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:6}
+.bar>div{max-width:760px;margin:0 auto;display:flex;gap:8px;justify-content:space-between}
+.bar button{flex:1}
+.gr{display:flex;flex-wrap:wrap;gap:7px}
+.gr b{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#e3eaec;cursor:pointer;font-size:.9rem}
+.gr b.d{background:var(--ok);color:#fff}.gr b.r{background:#d69e2e;color:#fff}.gr b.c{outline:3px solid var(--p2);outline-offset:1px}
+.lg{font-size:.78rem;color:var(--m);margin-top:10px}
+#ov{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
+#ov>div{background:#fff;border-radius:16px;padding:22px;max-width:460px;width:100%;max-height:90vh;overflow:auto}
+#wm{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.07}
+.er{color:var(--w)}
+.spin{width:30px;height:30px;border:4px solid var(--pl);border-top-color:var(--p2);border-radius:50%;animation:sp 1s linear infinite;margin:12px 0}@keyframes sp{to{transform:rotate(360deg)}}
+.done{text-align:center;padding:34px 20px}
+.ring{width:120px;height:120px;border-radius:50%;margin:16px auto;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:var(--p);background:conic-gradient(var(--ok) calc(var(--v)*1%),#e3eaec 0);position:relative}
+.ring:before{content:"";position:absolute;inset:10px;background:#fff;border-radius:50%}.ring span{position:relative}
+.ck{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{body{display:none}}
 </style></head><body>
 <div id="wm"></div><div id="ov"><div id="ovb"></div></div><div id="app"></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwiNc8DWhYz-OCYdfHKAiI7ghl062OYSGoW3hXcrSf3p7dDGLR-nS7n0FUxyzCBnZTjxA/exec"; // <-- tempel URL deployment Apps Script
+const API_URL = "https://script.google.com/macros/s/AKfycbxSA-uXkaBVkl7uM6RRhX8nuvyMQUv_MBNBG5SUs2tf4fqVjLYHYn8_WDY9HT9agPHP4g/exec"; // <-- URL deployment Apps Script
 const $ = s => document.querySelector(s);
-const S = { run: false, jaw: {}, ragu: {}, idx: 0, pel: 0, items: [] };
+const S = { run: false, jaw: {}, ragu: {}, idx: 0, pel: 0, items: [], dirty: 0 };
+const MOB = matchMedia("(pointer:coarse)").matches;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const cur = () => S.items[S.idx];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// ---------- API dengan retry 3x ----------
-async function api(a, d) {
+// ---------- API: POST + cadangan JSONP (GET) + retry exponential backoff ----------
+async function post(a, d, t = 25000) {
+  const c = new AbortController(), id = setTimeout(() => c.abort(), t);
+  try {
+    const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, signal: c.signal,
+      body: JSON.stringify({ action: a, sid: S.sid, nis: S.nis, ...d }) });
+    return await r.json();
+  } finally { clearTimeout(id); }
+}
+function jsonp(a, d, t = 25000) {
+  return new Promise((ok, no) => {
+    const cb = "cb" + Date.now() + Math.floor(Math.random() * 1e6), s = document.createElement("script");
+    const end = () => { clearTimeout(tm); delete window[cb]; s.remove(); };
+    const tm = setTimeout(() => { end(); no(new Error("timeout")); }, t);
+    window[cb] = r => { end(); ok(r); };
+    s.onerror = () => { end(); no(new Error("jsonp")); };
+    s.src = API_URL + "?action=" + a + "&cb=" + cb + "&d=" + encodeURIComponent(JSON.stringify({ sid: S.sid, nis: S.nis, ...d }));
+    document.head.appendChild(s);
+  });
+}
+async function api(a, d, n = 3) {
   let e;
-  for (let i = 0; i < 3; i++) {
-    try {
-      const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: a, sid: S.sid, nis: S.nis, ...d }) });
-      return await r.json();
-    } catch (x) { e = x; await new Promise(r => setTimeout(r, 800 * (i + 1))); }
+  for (let i = 0; i < n; i++) {
+    try { const r = await post(a, d); if (r && r.retry) e = new Error(r.msg); else return r; }
+    catch (x) { e = x; try { const r = await jsonp(a, d); if (r && !r.retry) return r; } catch (y) {} }
+    if (i < n - 1) await sleep(1000 * 2 ** i + Math.random() * 1000);
   }
-  throw e;
+  throw e || new Error("gagal");
 }
 
 // ---------- Acak per siswa (seed NIS) ----------
@@ -69,34 +124,32 @@ function susun(grup) {
 
 // ---------- Login ----------
 function login(msg) {
-  $("#app").innerHTML = `<div class="w"><div class="card"><h1>Latihan Soal TKA Bahasa Inggris</h1>
-  <p style="color:var(--m);margin:0">Kelas X SMK</p>
-  <label class="f">Nama lengkap</label><input type="text" id="n" autocomplete="off">
-  <label class="f">NIS</label><input type="tel" id="i" autocomplete="off">
-  <label class="f">Kelas</label><select id="k"><option>X</option></select>
-  <label class="f">Jurusan</label><input type="text" id="j" placeholder="mis. AKL, MPLB, ULP" autocomplete="off">
-  <label class="f">Token ujian</label><input type="text" id="t" autocomplete="off">
-  <div class="st" style="margin-top:16px"><b>Aturan ujian</b>
-Ujian berjalan dalam layar penuh. Jangan pindah tab atau aplikasi.
-Pelanggaran berulang membuat ujian otomatis dikumpulkan.
-Copy, paste, dan klik kanan dinonaktifkan. Urutan soal diacak.
-Waktu dihitung server dan hanya ada satu kali percobaan.</div>
-  <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="c" style="width:22px;height:22px"> Saya mengerti dan setuju</label>
-  <button id="go" style="width:100%;margin-top:14px">Mulai ujian</button><div id="er" class="err">${esc(msg || "")}</div></div></div>`;
+  const inApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|wv\)/i.test(navigator.userAgent);
+  $("#app").innerHTML = `<div class="w"><div class="hero"><h1>Latihan Soal TKA Bahasa Inggris</h1><p>Kelas X SMK &middot; 20 soal &middot; satu kali percobaan</p><span class="chip" id="cn"><i></i><span>Memeriksa koneksi...</span></span></div>
+  <div class="card"><label class="f" for="n">Nama lengkap</label><input type="text" id="n" autocomplete="off" autocapitalize="words">
+  <label class="f" for="i">NIS</label><input type="tel" id="i" inputmode="numeric" autocomplete="off">
+  <label class="f" for="k">Kelas</label><select id="k"><option>X</option></select>
+  <label class="f" for="j">Jurusan</label><input type="text" id="j" placeholder="mis. AKL, MPLB, ULP" autocomplete="off" autocapitalize="characters">
+  <label class="f" for="t">Token ujian</label><input type="text" id="t" autocomplete="off" autocapitalize="characters" placeholder="Diberikan pengawas">
+  ${inApp ? `<p class="er mt">Anda memakai browser di dalam aplikasi. Buka halaman ini di Chrome atau Safari agar ujian lancar.</p>` : ""}
+  <ul class="rules"><li>Ujian berjalan dalam layar penuh bila perangkat mendukung.</li><li>Jangan pindah tab atau aplikasi. Pelanggaran berulang mengumpulkan ujian otomatis.</li><li>Copy, paste, dan klik kanan dinonaktifkan. Urutan soal diacak.</li><li>Jawaban tersimpan otomatis. Jika koneksi putus, login lagi dengan data yang sama untuk melanjutkan.</li></ul>
+  <label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="c" style="width:22px;height:22px;accent-color:var(--p2)"> Saya mengerti dan setuju</label>
+  <button id="go" class="big">Mulai ujian</button><div id="er" class="er mt" role="alert">${esc(msg || "")}</div></div></div>`;
   $("#go").onclick = mulai;
+  jsonp("ping", {}, 12000).then(() => cn(1)).catch(() => post("ping", {}, 12000).then(() => cn(1)).catch(() => cn(0)));
 }
+function cn(ok) { const e = $("#cn"); if (e) { e.className = "chip " + (ok ? "on" : "off"); e.lastChild.textContent = ok ? "Terhubung ke server" : "Server tidak terjangkau, periksa internet"; } }
 
 async function mulai() {
   const v = id => $("#" + id).value.trim(), er = m => { $("#er").textContent = m; };
-  const nama = v("n"), nis = v("i"), jur = v("j"), token = v("t");
+  const nama = v("n"), nis = v("i"), jur = v("j").toUpperCase(), token = v("t");
   if (!nama || !nis || !jur || !token) return er("Lengkapi semua kolom.");
   if (!$("#c").checked) return er("Centang persetujuan aturan ujian.");
-  S.nama = nama; S.nis = nis; S.kelas = v("k") + " " + jur;
-  S.fs = 0;
+  S.nama = nama; S.nis = nis; S.kelas = v("k") + " " + jur; S.fs = 0;
   if (document.documentElement.requestFullscreen) { try { await document.documentElement.requestFullscreen(); S.fs = 1; } catch (e) {} }
   $("#go").disabled = true; er("Memuat soal...");
   try {
-    const r = await api("mulai", { nama, kelas: S.kelas, token, ua: navigator.userAgent });
+    const r = await api("mulai", { nama, kelas: S.kelas, token, ua: navigator.userAgent }, 4);
     if (!r.ok) { if (document.fullscreenElement) document.exitFullscreen(); $("#go").disabled = false; return er(r.msg); }
     S.sid = r.sid; S.offset = r.now - Date.now(); S.end = r.mulai + r.durasi * 60000; S.m = r.mulai;
     S.cfg = { nav: r.nav, maks: r.maks };
@@ -106,9 +159,9 @@ async function mulai() {
     S.jaw = { ...(r.jawaban || {}), ...(L.jaw || {}) }; S.ragu = L.ragu || {};
     S.idx = Math.min(L.idx || 0, S.items.length - 1); S.pel = Math.max(r.pel || 0, L.pel || 0);
     wm(); S.run = true; tampil(); tick();
-    S.tk = setInterval(tick, 1000); S.sy = setInterval(sinkron, 30000);
+    S.tk = setInterval(tick, 1000); S.sy = setInterval(sinkron, 35000 + Math.random() * 10000);
     if (S.pel >= S.cfg.maks) kirim("pelanggaran");
-  } catch (e) { $("#go").disabled = false; er("Koneksi gagal. Periksa internet lalu coba lagi."); }
+  } catch (e) { $("#go").disabled = false; if (document.fullscreenElement) document.exitFullscreen(); er("Koneksi gagal. Periksa internet lalu tekan Mulai ujian lagi."); }
 }
 
 // ---------- Tampilan soal ----------
@@ -119,32 +172,29 @@ function lengkap(q) {
   const c = a || []; return q.p.every((_, i) => c[i]);
 }
 function tampil() {
-  const q = cur(), n = S.items.length, nav = S.cfg.nav;
-  let h = `<div class="hd"><span>${esc(S.nama)}</span><span>Soal ${S.idx + 1}/${n}</span><span id="tm"></span><span id="sv" title="Status simpan">&#9679;</span></div><div class="w"><div class="card">`;
+  const q = cur(), n = S.items.length, nav = S.cfg.nav, done = S.items.filter(lengkap).length;
+  let h = `<div class="hd"><div><span class="nm">${esc(S.nama)}</span><span>Soal ${S.idx + 1}/${n}</span><span id="tm"></span><span id="sv" title="Status simpan">&#9679; Tersimpan</span></div><div class="pg" style="padding:0;display:block"><b style="width:${done / n * 100}%"></b></div></div><div class="w"><div class="card">`;
   if (q.s) h += `<div class="st">${esc(q.s)}</div>`;
-  if (q.img) h += `<img src="${esc(q.img)}" alt="Infografis Our Dreams, Our Future" draggable="false" onclick="zoom(this.src)" style="width:100%;border:1px solid var(--ln);border-radius:8px;cursor:zoom-in"><p style="color:var(--m);font-size:.85rem;margin:4px 0 12px">Ketuk gambar untuk memperbesar.</p>`;
-  h += `<p><b>${S.idx + 1}.</b> ${esc(q.teks)}</p>`;
+  if (q.img) h += `<img src="${esc(q.img)}" alt="Infografis Our Dreams, Our Future" draggable="false" onclick="zoom(this.src)" style="width:100%;border:1px solid var(--ln);border-radius:10px;cursor:zoom-in"><p class="mt">Ketuk gambar untuk memperbesar.</p>`;
+  h += `<p class="q"><span class="qn">${S.idx + 1}</span>${esc(q.teks)}</p>`;
   if (q.tipe === "C") {
     const a = S.jaw[q.no] || [];
-    h += `<table><tr><th></th><th>${q.label[0]}</th><th>${q.label[1]}</th></tr>` + q.ord.map(i =>
-      `<tr><td>${esc(q.p[i])}</td>` + [0, 1].map(j => `<td><input type="radio" name="r${i}" ${a[i] === q.label[j] ? "checked" : ""} onchange="pilihC(${i},${j})"></td>`).join("") + `</tr>`).join("") + `</table>`;
+    h += `<table><tr><th>Pernyataan</th><th>${q.label[0]}</th><th>${q.label[1]}</th></tr>` + q.ord.map(i =>
+      `<tr><td>${esc(q.p[i])}</td>` + [0, 1].map(j => `<td><input type="radio" name="r${i}" aria-label="${q.label[j]}" ${a[i] === q.label[j] ? "checked" : ""} onchange="pilihC(${i},${j})"></td>`).join("") + `</tr>`).join("") + `</table>`;
   } else {
     const a = S.jaw[q.no];
     h += q.ord.map((k, i) => {
       const on = q.tipe === "A" ? a === k : (a || []).includes(k);
-      return `<label class="op ${on ? "on" : ""}"><input type="${q.tipe === "A" ? "radio" : "checkbox"}" name="o" ${on ? "checked" : ""} onchange="pilih('${k}')"><span><b>${String.fromCharCode(65 + i)}.</b> ${esc(q.opsi[k])}</span></label>`;
+      return `<label class="op ${on ? "on" : ""}"><input type="${q.tipe === "A" ? "radio" : "checkbox"}" name="o" ${on ? "checked" : ""} onchange="pilih('${k}')"><span><b>${String.fromCharCode(65 + i)}</b>${esc(q.opsi[k])}</span></label>`;
     }).join("");
-    if (q.tipe === "B") h += `<p style="color:var(--m);font-size:.9rem">Pilih ${q.n} jawaban.</p>`;
+    if (q.tipe === "B") h += `<p class="mt">Pilih ${q.n} jawaban (terpilih ${(a || []).length}).</p>`;
   }
-  h += `<div class="nv"><span>${nav && S.idx > 0 ? `<button class="s" onclick="ke(${S.idx - 1})">Sebelumnya</button>` : ""}</span>`;
-  if (nav) h += `<button class="s" onclick="ragu()">${S.ragu[q.no] ? "Batal ragu-ragu" : "Ragu-ragu"}</button>`;
-  h += S.idx < n - 1 ? `<button onclick="ke(${S.idx + 1})">Berikutnya</button>` : `<button onclick="konfirm()">Kumpulkan</button>`;
   h += `</div>`;
-  if (nav) {
-    h += `<div class="gr">` + S.items.map((x, i) => `<b class="${S.ragu[x.no] ? "r" : lengkap(x) ? "d" : ""} ${i === S.idx ? "c" : ""}" onclick="ke(${i})">${i + 1}</b>`).join("") + `</div>`;
-    if (S.idx < n - 1) h += `<div class="nv"><span></span><button class="s" onclick="konfirm()">Kumpulkan sekarang</button></div>`;
-  }
-  $("#app").innerHTML = h + `</div></div>`;
+  if (nav) h += `<div class="card"><div class="gr">` + S.items.map((x, i) => `<b class="${S.ragu[x.no] ? "r" : lengkap(x) ? "d" : ""} ${i === S.idx ? "c" : ""}" onclick="ke(${i})">${i + 1}</b>`).join("") + `</div><div class="lg">Hijau: terjawab &middot; Kuning: ragu-ragu &middot; Abu-abu: belum</div></div>`;
+  h += `<div class="bar"><div>${nav && S.idx > 0 ? `<button class="s" onclick="ke(${S.idx - 1})">Sebelumnya</button>` : ""}`;
+  if (nav) h += `<button class="s" onclick="ragu()">${S.ragu[q.no] ? "Batal ragu" : "Ragu-ragu"}</button>`;
+  h += S.idx < n - 1 ? `<button onclick="ke(${S.idx + 1})">Berikutnya</button>` : `<button style="background:var(--ok)" onclick="konfirm()">Kumpulkan</button>`;
+  $("#app").innerHTML = h + `</div></div></div>`;
   tick();
 }
 function pilih(k) {
@@ -159,13 +209,10 @@ function pilih(k) {
   }
   lokal(); tampil();
 }
-function pilihC(i, j) {
-  const q = cur(), a = S.jaw[q.no] || [];
-  a[i] = q.label[j]; S.jaw[q.no] = a; lokal(); tampil();
-}
+function pilihC(i, j) { const q = cur(), a = S.jaw[q.no] || []; a[i] = q.label[j]; S.jaw[q.no] = a; lokal(); tampil(); }
 function ragu() { const q = cur(); S.ragu[q.no] = !S.ragu[q.no]; lokal(); tampil(); }
 function ke(i) { S.idx = i; lokal(); tampil(); scrollTo(0, 0); }
-function lokal() { try { localStorage.setItem("tka_" + S.nis, JSON.stringify({ m: S.m, jaw: S.jaw, ragu: S.ragu, idx: S.idx, pel: S.pel })); } catch (e) {} }
+function lokal() { S.dirty = 1; try { localStorage.setItem("tka_" + S.nis, JSON.stringify({ m: S.m, jaw: S.jaw, ragu: S.ragu, idx: S.idx, pel: S.pel })); } catch (e) {} }
 
 // ---------- Timer & sinkron ----------
 function tick() {
@@ -177,15 +224,16 @@ function tick() {
   t.className = s <= 60 ? "crit" : s <= 300 ? "low" : "";
 }
 function sinkron() {
-  if (!S.run) return;
-  api("simpan", { jawaban: S.jaw }).then(r => sv(r.ok)).catch(() => sv(false));
+  if (!S.run || !S.dirty) return;
+  S.dirty = 0;
+  api("simpan", { jawaban: S.jaw }, 1).then(r => sv(r.ok)).catch(() => { S.dirty = 1; sv(false); });
 }
-function sv(ok) { const e = $("#sv"); if (e) { e.style.color = ok ? "#86efac" : "#fca5a5"; e.title = ok ? "Tersimpan" : "Belum tersimpan (offline)"; } }
+function sv(ok) { const e = $("#sv"); if (e) { e.style.color = ok ? "#86efac" : "#fca5a5"; e.innerHTML = ok ? "&#9679; Tersimpan" : "&#9679; Offline"; } }
 
 // ---------- Modal ----------
 function modal(h, bt = []) {
   const b = $("#ovb"); b.innerHTML = h;
-  bt.forEach(([t, f, s]) => { const x = document.createElement("button"); x.textContent = t; if (s) x.className = "s"; x.style.margin = "10px 8px 0 0"; x.onclick = f; b.appendChild(x); });
+  bt.forEach(([t, f, s]) => { const x = document.createElement("button"); x.textContent = t; if (s) x.className = "s"; x.style.margin = "12px 8px 0 0"; x.onclick = f; b.appendChild(x); });
   $("#ov").style.display = "flex";
 }
 const hide = () => { $("#ov").style.display = "none"; $("#ovb").parentElement.style.maxWidth = ""; };
@@ -195,30 +243,37 @@ function zoom(src) {
 }
 function layarPenuh() { if (S.fs && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); }
 
-// ---------- Submit ----------
+// ---------- Submit (tangguh) ----------
 function konfirm() {
   const b = S.items.map((q, i) => lengkap(q) ? 0 : i + 1).filter(Boolean);
-  modal(`<p>Terjawab lengkap: <b>${S.items.length - b.length}</b> dari ${S.items.length}.</p>${b.length ? `<p>Belum lengkap: soal ${b.join(", ")}</p>` : ""}<p>Kumpulkan sekarang? Jawaban tidak bisa diubah lagi.</p>`,
+  modal(`<h3>Kumpulkan jawaban?</h3><p>Terjawab lengkap: <b>${S.items.length - b.length}</b> dari ${S.items.length}.</p>${b.length ? `<p class="er">Belum lengkap: soal ${b.join(", ")}</p>` : ""}<p class="mt">Setelah dikumpulkan, jawaban tidak bisa diubah.</p>`,
     [["Periksa lagi", hide, 1], ["Kumpulkan", () => kirim("")]]);
 }
+function kode() { try { return btoa(unescape(encodeURIComponent(JSON.stringify({ n: S.nis, j: S.jaw })))); } catch (e) { return ""; } }
 async function kirim(auto) {
   if (S.sending) return;
-  S.sending = true; S.run = false; clearInterval(S.tk); clearInterval(S.sy);
-  modal(`<p>Mengirim jawaban...</p>`);
+  S.sending = true; S.run = false; clearInterval(S.tk); clearInterval(S.sy); clearInterval(S.rt);
+  modal(`<h3>Mengirim jawaban...</h3><div class="spin"></div><p class="mt">Jangan tutup atau muat ulang halaman ini.</p>`);
   try {
-    const r = await api("submit", { jawaban: S.jaw, auto });
-    if (!r.ok && !r.selesai) throw new Error(r.msg);
+    if (auto === "waktu") await sleep(Math.random() * 6000); // sebar beban saat waktu habis serentak
+    const r = await api("submit", { jawaban: S.jaw, auto }, 5);
+    if (!r.ok && !r.selesai) throw Object.assign(new Error(r.msg), { final: 1 });
     try { localStorage.removeItem("tka_" + S.nis); } catch (e) {}
-    selesai(r);
-  } catch (e) {
-    S.sending = false;
-    modal(`<p class="err">Jawaban belum terkirim. Periksa koneksi lalu coba lagi. Jawaban Anda aman di perangkat ini.</p>`, [["Kirim ulang", () => kirim(auto)]]);
-  }
+    clearInterval(S.rt); selesai(r);
+  } catch (e) { S.sending = false; gagal(auto, e); }
 }
+function gagal(auto, e) {
+  modal(`<h3 class="er">Jawaban belum terkirim</h3><p>${esc(e.final ? e.message : "Koneksi ke server bermasalah.")} Jawaban aman di perangkat ini dan dicoba kirim ulang otomatis tiap 20 detik. Jangan tutup halaman.</p>
+  <p class="mt">Bila tetap gagal, foto atau salin kode cadangan ini dan serahkan ke guru:</p><textarea readonly onclick="this.select()">${kode()}</textarea>`,
+    [["Kirim ulang sekarang", () => kirim(auto)]]);
+  clearInterval(S.rt); S.rt = setInterval(() => kirim(auto), 20000);
+}
+addEventListener("online", () => { if (!S.run && S.rt && !S.sending) kirim(""); });
 function selesai(r) {
   hide(); $("#wm").style.display = "none";
   if (document.fullscreenElement) document.exitFullscreen();
-  $("#app").innerHTML = `<div class="w"><div class="card"><h1>Terima kasih</h1><p>Jawaban Anda sudah terkirim.</p>${r.tampil ? `<p>Skor <b>${r.skor}/${r.total}</b>, nilai <b>${r.nilai}</b></p>` : ""}</div></div>`;
+  const pct = r.tampil ? Math.max(0, Math.min(100, Number(r.nilai) || 0)) : 0;
+  $("#app").innerHTML = `<div class="w"><div class="card done"><div class="ck">&#10003;</div><h1>Jawaban terkirim</h1><p class="mt">Terima kasih, ${esc(S.nama)}. Ujian Anda sudah tercatat.</p>${r.tampil ? `<div class="ring" style="--v:${pct}"><span>${r.nilai}</span></div><p>Skor <b>${r.skor}/${r.total}</b></p>` : ""}<p class="mt">Anda boleh menutup halaman ini.</p></div></div>`;
 }
 
 // ---------- Anti-nyontek ----------
@@ -227,13 +282,13 @@ function lapor(j) {
   if (!S.run) return;
   const now = Date.now(); if (now - lastP < 2000) return; lastP = now;
   S.pel++; lokal();
-  api("log", { jenis: j }).then(r => { if (r && r.pel > S.pel) S.pel = r.pel; }).catch(() => {});
+  api("log", { jenis: j }, 1).then(r => { if (r && r.pel > S.pel) S.pel = r.pel; }).catch(() => {});
   if (S.pel >= S.cfg.maks) return kirim("pelanggaran");
-  modal(`<h2 style="color:var(--w);margin-top:0">Peringatan ${S.pel} dari ${S.cfg.maks}</h2><p>Terdeteksi: ${esc(j)}. Jika mencapai ${S.cfg.maks} pelanggaran, ujian otomatis dikumpulkan.</p>`,
+  modal(`<h3 class="er">Peringatan ${S.pel} dari ${S.cfg.maks}</h3><p>Terdeteksi: ${esc(j)}. Jika mencapai ${S.cfg.maks} pelanggaran, ujian otomatis dikumpulkan.</p>`,
     [["Kembali ke ujian", () => { hide(); layarPenuh(); }]]);
 }
 document.addEventListener("visibilitychange", () => document.hidden && lapor("pindah tab atau aplikasi"));
-addEventListener("blur", () => lapor("jendela tidak aktif"));
+addEventListener("blur", () => { if (!MOB) lapor("jendela tidak aktif"); }); // di HP, blur sering salah deteksi (notifikasi, keyboard)
 document.addEventListener("fullscreenchange", () => { if (S.run && S.fs && !document.fullscreenElement) lapor("keluar layar penuh"); });
 ["contextmenu", "copy", "cut", "paste", "selectstart", "dragstart"].forEach(e => document.addEventListener(e, x => { if (S.run) { x.preventDefault(); if (e === "copy" || e === "paste" || e === "cut") lapor("copy/paste"); } }));
 addEventListener("keydown", e => {
@@ -242,7 +297,7 @@ addEventListener("keydown", e => {
   if (e.key === "F12" || ((e.ctrlKey || e.metaKey) && k.length === 1 && ("cvxapsu".includes(k) || (e.shiftKey && "ijc".includes(k))))) e.preventDefault();
 });
 addEventListener("keyup", e => { if (S.run && e.key === "PrintScreen") { try { navigator.clipboard.writeText(" "); } catch (x) {} lapor("PrintScreen"); } });
-addEventListener("beforeunload", e => { if (S.run) { e.preventDefault(); e.returnValue = ""; } });
+addEventListener("beforeunload", e => { if (S.run || S.sending) { e.preventDefault(); e.returnValue = ""; } });
 function wm() {
   const t = esc(S.nama + " - " + S.nis);
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170'><text x='12' y='95' font-size='16' fill='#000' transform='rotate(-25 130 85)'>${t}</text></svg>`;

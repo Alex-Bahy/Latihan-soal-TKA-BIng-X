@@ -1,12 +1,12 @@
 /**
- * Backend Ujian TKA - Google Apps Script (tempel di Extensions > Apps Script pada spreadsheet).
- * Bank soal + KUNCI hanya ada di sini; browser tidak pernah menerima kunci.
+ * Backend Ujian TKA v2 - Google Apps Script.
+ * Perbaikan: lock singkat, SID stabil (bisa lanjut dari perangkat lain), jalur GET/JSONP cadangan,
+ * cache config, pencarian sesi cepat, menu pemulihan untuk guru.
  */
 const SS_ID = '1Jzo_c5cjPouJ8DB9LDf8nTpu2dpe3ke1lwZqz7S__bc';
-const IMG_INFO = 'https://iili.io/nXwyNiG.md.png'; // infografis Our Dreams, Our Future (soal 9, 10, 19)
+const IMG_INFO = 'https://iili.io/nXwyNiG.md.png';
 const L = 'ABCDE', BS = ['Benar', 'Salah'], ST = ['Sesuai', 'Tidak Sesuai'];
 
-// A: [no,'A',teks,[opsi A..D],'kunci'] | B: [no,'B',teks,[opsi],['k1','k2']] | C: [no,'C',teks,[label],[[pernyataan,kunci]x3]]
 const BANK = [
  {s:null,q:[
   [1,'A',"Rina says, \"Hello, my name is Rina. What's your name?\" What is the best response from Doni?",["I'm fine, thank you.","Hi, I'm Doni. Nice to meet you.","See you later!","Good night!"],'B'],
@@ -43,11 +43,14 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('TKA')
     .addItem('Setup Awal', 'setup')
     .addItem('Reset Sesi Siswa (izinkan ulang)', 'resetSesi')
+    .addSeparator()
+    .addItem('Pulihkan / Kumpulkan Paksa (siswa gagal kirim)', 'pulihkan')
+    .addItem('Input Jawaban dari Kode Cadangan', 'inputManual')
     .addItem('Rekap Otomatis', 'rekap').addToUi();
 }
 
 function setup() {
-  const ss = SpreadsheetApp.openById(SS_ID);
+  const ss = SS();
   const H = {
     Hasil: ['Mulai','Selesai','Durasi (menit)','Nama','NIS','Kelas','Skor A','Skor B','Skor C','Skor Total (maks 30)','Nilai','Pelanggaran','Status','User Agent'],
     Jawaban_Detail: ['Timestamp','NIS','Nama','No Soal Asli','Jawaban Siswa','Kunci','Poin'],
@@ -65,12 +68,12 @@ function setup() {
   ss.getSheetByName('Log_Pelanggaran').getRange('B:B').setNumberFormat('@');
   const c = ss.getSheetByName('Config');
   if (c.getLastRow() < 2) c.getRange(2,1,6,2).setValues([['TOKEN','TKA2026'],['DURASI_MENIT',45],['MAKS_PELANGGARAN',3],['NAVIGASI_BEBAS',true],['TAMPILKAN_NILAI',true],['UJIAN_AKTIF',true]]);
+  CacheService.getScriptCache().remove('cfg');
   rekap();
 }
 
 function rekap() {
-  const ss = SpreadsheetApp.openById(SS_ID);
-  const s = ss.getSheetByName('Rekap') || ss.insertSheet('Rekap');
+  const s = SS().getSheetByName('Rekap') || SS().insertSheet('Rekap');
   s.clear();
   s.getRange('A1').setFormula('=IFERROR(QUERY(Hasil!A:N,"select F, count(D), avg(K), max(K), min(K) where F is not null group by F label F \'Kelas\', count(D) \'Jumlah\', avg(K) \'Rata-rata\', max(K) \'Tertinggi\', min(K) \'Terendah\'",1),"Belum ada data")');
 }
@@ -85,36 +88,76 @@ function resetSesi() {
   ui.alert('Sesi direset. Siswa bisa mengulang (data lama di sheet Hasil tetap ada).');
 }
 
+// Kumpulkan paksa sesi AKTIF yang waktunya sudah habis (memakai jawaban autosave terakhir)
+// dan lengkapi Hasil untuk sesi yang sudah SELESAI tetapi barisnya belum masuk Hasil.
+function pulihkan() {
+  const ui = SpreadsheetApp.getUi(), c = cfg(), s = sh('Sesi'), v = s.getDataRange().getValues();
+  const ada = {}; sh('Hasil').getDataRange().getValues().slice(1).forEach(r => ada[nk(r[4])] = 1);
+  const batas = Number(c.DURASI_MENIT) * 60000 + 60000, now = Date.now(); let a = 0, b = 0;
+  for (let i = 1; i < v.length; i++) {
+    const x = v[i]; if (!nk(x[0])) continue;
+    const o = { r: i + 1, s, v: x }, j = safeJson(x[5]);
+    if (x[4] === 'AKTIF') { if (now > Number(x[3]) + batas) { catat(o, j, 'DIKUMPULKAN GURU (waktu habis)'); a++; } }
+    else if (!ada[nk(x[0])]) { catat(o, j, 'DIPULIHKAN', true); b++; }
+  }
+  ui.alert('Selesai.\nDikumpulkan paksa: ' + a + ' siswa\nHasil dipulihkan: ' + b + ' siswa');
+}
+
+// Tempel "kode cadangan" dari layar siswa yang gagal kirim.
+function inputManual() {
+  const ui = SpreadsheetApp.getUi();
+  const r = ui.prompt('Input kode cadangan', 'Tempel kode cadangan siswa:', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  try {
+    const k = JSON.parse(Utilities.newBlob(Utilities.base64Decode(r.getResponseText().trim())).getDataAsString());
+    const o = sesi(clean(k.n));
+    if (!o.v) return ui.alert('NIS tidak ditemukan di sheet Sesi.');
+    if (o.v[4] !== 'AKTIF') return ui.alert('Siswa ini sudah tercatat selesai.');
+    catat(o, k.j || {}, 'DIINPUT GURU');
+    ui.alert('Jawaban ' + o.v[1] + ' berhasil dicatat.');
+  } catch (e) { ui.alert('Kode tidak valid.'); }
+}
+
 // ---------- Utilitas ----------
-function sh(n) { // jika sheet belum ada, jalankan setup() otomatis
-  const ss = SpreadsheetApp.openById(SS_ID);
-  let s = ss.getSheetByName(n);
-  if (!s) { setup(); s = ss.getSheetByName(n); }
+let _ss; const SS = () => _ss || (_ss = SpreadsheetApp.openById(SS_ID));
+function sh(n) {
+  let s = SS().getSheetByName(n);
+  if (!s) { setup(); s = SS().getSheetByName(n); }
   return s;
 }
 const bool = v => String(v).toUpperCase() === 'TRUE';
 const fail = m => ({ ok: false, msg: m });
 const out = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+const nk = s => String(s == null ? '' : s).trim().replace(/^0+(?=.)/, '');
+const safeJson = s => { try { return JSON.parse(s || '{}'); } catch (e) { return {}; } };
 function clean(s) { s = String(s == null ? '' : s).trim().slice(0, 100); return /^[=+\-@]/.test(s) ? "'" + s : s; }
-function cfg() { const c = {}; sh('Config').getDataRange().getValues().slice(1).forEach(r => c[r[0]] = r[1]); return c; }
-function sesi(nis) {
-  const s = sh('Sesi'), v = s.getDataRange().getValues();
-  for (let i = 1; i < v.length; i++) if (String(v[i][0]) === nis) return { r: i + 1, v: v[i], s };
+function cfg() {
+  const ca = CacheService.getScriptCache(), h = ca.get('cfg');
+  if (h) return JSON.parse(h);
+  const c = {}; sh('Config').getDataRange().getValues().slice(1).forEach(r => c[r[0]] = r[1]);
+  ca.put('cfg', JSON.stringify(c), 30);
+  return c;
+}
+function sesi(nis) { // baca hanya kolom NIS, lalu satu baris
+  const s = sh('Sesi'), n = s.getLastRow(), k = nk(nis);
+  if (n > 1) {
+    const a = s.getRange(2, 1, n - 1, 1).getValues();
+    for (let i = 0; i < a.length; i++) if (nk(a[i][0]) === k) return { r: i + 2, s, v: s.getRange(i + 2, 1, 1, 10).getValues()[0] };
+  }
   return { s };
 }
 function chk(d) {
   const o = sesi(clean(d.nis));
-  if (!o.v || String(o.v[7]) !== String(d.sid)) return { err: fail('Sesi tidak valid. Muat ulang halaman dan login lagi.') };
+  if (!o.v || String(o.v[7]) !== String(d.sid)) return { err: fail('Sesi tidak valid. Muat ulang halaman lalu login lagi dengan data yang sama.') };
   if (o.v[4] !== 'AKTIF') return { err: { ok: false, selesai: true, msg: 'Ujian sudah dikumpulkan.' } };
   return o;
 }
-function soalKlien() { // tanpa kunci
+function soalKlien() {
   return BANK.map(g => ({ s: g.s, q: g.q.map(x => x[1] === 'C'
     ? { no: x[0], tipe: 'C', img: x[5], teks: x[2], label: x[3], p: x[4].map(p => p[0]) }
     : { no: x[0], tipe: x[1], img: x[5], teks: x[2], n: x[1] === 'B' ? x[4].length : undefined, opsi: Object.fromEntries(x[3].map((o, i) => [L[i], o])) }) }));
 }
 function nilai(j) {
-  // A: 1 poin. B: 2 poin bila semua benar, 1 poin bila sebagian benar tanpa pilihan salah. C: 2 poin bila semua benar, 1 poin bila tepat satu pernyataan salah.
   const d = []; let a = 0, b = 0, c = 0;
   BANK.forEach(g => g.q.forEach(x => {
     const no = x[0], t = x[1], u = j[no]; let p = 0, key, ans;
@@ -134,65 +177,90 @@ function nilai(j) {
   }));
   return { a, b, c, d };
 }
+const hasil = (tampil, skor) => ({ ok: true, tampil, skor, nilai: Math.round(skor / TOTAL * 10000) / 100, total: TOTAL });
+function kunci(fn) { const k = LockService.getScriptLock(); k.waitLock(30000); try { return fn(); } finally { k.releaseLock(); } }
 
 // ---------- API ----------
-function doGet() { return out({ ok: true, status: 'API ujian aktif' }); }
-
+function route(d) {
+  const F = { ping: () => ({ ok: true }), mulai, simpan, log: logP, submit };
+  if (!F[d.action]) return fail('Aksi tidak dikenal.');
+  try { return F[d.action](d); }
+  catch (err) { return { ok: false, retry: true, msg: 'Server sedang sibuk (' + err.message + ')' }; }
+}
 function doPost(e) {
-  let lock;
-  try {
-    const d = JSON.parse(e.postData.contents);
-    const F = { mulai, simpan, log: logP, submit };
-    if (!F[d.action]) return out(fail('Aksi tidak dikenal.'));
-    if (d.action !== 'simpan') { lock = LockService.getScriptLock(); lock.waitLock(25000); }
-    return out(F[d.action](d));
-  } catch (err) {
-    return out(fail('Server sibuk atau error: ' + err.message));
-  } finally { if (lock) lock.releaseLock(); }
+  let d; try { d = JSON.parse(e.postData.contents); } catch (x) { return out(fail('Data tidak valid.')); }
+  return out(route(d));
+}
+// GET: status API, atau jalur cadangan JSONP (untuk browser/jaringan yang gagal memakai POST)
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (!p.action) return out({ ok: true, status: 'API ujian aktif' });
+  let d = {}; try { d = JSON.parse(p.d || '{}'); } catch (x) {}
+  d.action = p.action;
+  const t = JSON.stringify(route(d));
+  if (!p.cb) return ContentService.createTextOutput(t).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(String(p.cb).replace(/[^\w.$]/g, '') + '(' + t + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
 
 function mulai(d) {
   const c = cfg();
   if (!bool(c.UJIAN_AKTIF)) return fail('Ujian belum dibuka.');
-  if (String(d.token).trim() !== String(c.TOKEN).trim()) return fail('Token salah.');
+  if (String(d.token).trim().toUpperCase() !== String(c.TOKEN).trim().toUpperCase()) return fail('Token salah.');
   const nis = clean(d.nis), nama = clean(d.nama);
   if (!nis || !nama) return fail('Nama dan NIS wajib diisi.');
-  let o = sesi(nis); const sid = Utilities.getUuid(), now = Date.now();
-  if (!o.v) { o.s.appendRow([nis, nama, clean(d.kelas), now, 'AKTIF', '{}', 0, sid, clean(d.ua), '']); o = { v: [nis, nama, '', now, 'AKTIF', '{}', 0] }; }
-  else if (o.v[4] !== 'AKTIF') return { ok: false, selesai: true, msg: 'Anda sudah mengerjakan ujian ini.' };
-  else o.s.getRange(o.r, 8).setValue(sid);
-  return { ok: true, sid, now, mulai: Number(o.v[3]), durasi: Number(c.DURASI_MENIT), nav: bool(c.NAVIGASI_BEBAS),
-    maks: Number(c.MAKS_PELANGGARAN), soal: soalKlien(), jawaban: JSON.parse(o.v[5] || '{}'), pel: Number(o.v[6]) };
+  return kunci(() => {
+    let o = sesi(nis), sid;
+    if (!o.v) {
+      sid = Utilities.getUuid();
+      const r = o.s.getLastRow() + 1;
+      o.s.getRange(r, 1).setNumberFormat('@');
+      o.s.getRange(r, 1, 1, 10).setValues([[nis, nama, clean(d.kelas), Date.now(), 'AKTIF', '{}', 0, sid, clean(d.ua), '']]);
+      o = sesi(nis);
+    } else if (o.v[4] !== 'AKTIF') return { ok: false, selesai: true, msg: 'Anda sudah mengerjakan ujian ini.' };
+    else { sid = String(o.v[7] || '') || Utilities.getUuid(); if (!o.v[7]) o.s.getRange(o.r, 8).setValue(sid); } // SID tetap sama -> bisa lanjut di perangkat lain
+    return { ok: true, sid, now: Date.now(), mulai: Number(o.v[3]), durasi: Number(c.DURASI_MENIT), nav: bool(c.NAVIGASI_BEBAS),
+      maks: Number(c.MAKS_PELANGGARAN), soal: soalKlien(), jawaban: safeJson(o.v[5]), pel: Number(o.v[6]) };
+  });
 }
 
-function simpan(d) {
+function simpan(d) { // tanpa lock: ringan & sering dipanggil
   const o = chk(d); if (o.err) return o.err;
   o.s.getRange(o.r, 6).setValue(JSON.stringify(d.jawaban || {}));
   return { ok: true };
 }
 
 function logP(d) {
-  const o = chk(d); if (o.err) return o.err;
-  const n = Number(o.v[6]) + 1;
-  o.s.getRange(o.r, 7).setValue(n);
-  sh('Log_Pelanggaran').appendRow([new Date(), o.v[0], o.v[1], clean(d.jenis), n]);
-  return { ok: true, pel: n };
+  return kunci(() => {
+    const o = chk(d); if (o.err) return o.err;
+    const n = Number(o.v[6]) + 1;
+    o.s.getRange(o.r, 7).setValue(n);
+    sh('Log_Pelanggaran').appendRow([new Date(), o.v[0], o.v[1], clean(d.jenis), n]);
+    return { ok: true, pel: n };
+  });
 }
 
 function submit(d) {
-  const nis = clean(d.nis), o = sesi(nis), c = cfg();
-  if (!o.v || String(o.v[7]) !== String(d.sid)) return fail('Sesi tidak valid.');
-  const tampil = bool(c.TAMPILKAN_NILAI);
-  if (o.v[4] !== 'AKTIF') { const sk = Number(o.v[9]); return { ok: true, tampil, skor: sk, nilai: Math.round(sk / TOTAL * 10000) / 100, total: TOTAL }; } // idempotent
-  const j = d.jawaban || {}, r = nilai(j), skor = r.a + r.b + r.c, nl = Math.round(skor / TOTAL * 10000) / 100;
+  const tampil = bool(cfg().TAMPILKAN_NILAI);
+  return kunci(() => {
+    const o = sesi(clean(d.nis));
+    if (!o.v || String(o.v[7]) !== String(d.sid)) return fail('Sesi tidak valid. Muat ulang, login lagi, lalu kumpulkan. Jika tetap gagal, serahkan kode cadangan ke guru.');
+    if (o.v[4] !== 'AKTIF') return hasil(tampil, Number(o.v[9]) || 0); // idempotent
+    const lewat = Date.now() > Number(o.v[3]) + Number(cfg().DURASI_MENIT) * 60000 + 60000;
+    const st = d.auto === 'pelanggaran' ? 'AUTO-SUBMIT PELANGGARAN' : (lewat ? 'TERLAMBAT' : 'SELESAI');
+    return hasil(tampil, catat(o, d.jawaban || {}, st));
+  });
+}
+
+// Tulis hasil. Status Sesi ditulis lebih dulu agar jawaban pasti aman; jika Hasil/Detail gagal, jalankan menu "Pulihkan".
+function catat(o, j, st, sudah) {
+  const r = nilai(j), skor = r.a + r.b + r.c, nl = Math.round(skor / TOTAL * 10000) / 100;
   const now = Date.now(), mulai = Number(o.v[3]);
-  const st = d.auto === 'pelanggaran' ? 'AUTO-SUBMIT PELANGGARAN'
-    : (now > mulai + Number(c.DURASI_MENIT) * 60000 + 10000 ? 'TERLAMBAT' : 'SELESAI');
-  sh('Hasil').appendRow([new Date(mulai), new Date(now), Math.round((now - mulai) / 600) / 100, o.v[1], nis, o.v[2], r.a, r.b, r.c, skor, nl, Number(o.v[6]), st, o.v[8] || '']);
-  const det = sh('Jawaban_Detail'), ts = new Date();
-  const rows = r.d.map(x => [ts, nis, o.v[1], x[0], x[1], x[2], x[3]]);
-  det.getRange(det.getLastRow() + 1, 1, rows.length, 7).setValues(rows);
-  o.s.getRange(o.r, 5, 1, 2).setValues([['SELESAI', JSON.stringify(j)]]);
-  o.s.getRange(o.r, 10).setValue(skor);
-  return { ok: true, tampil, skor, nilai: nl, total: TOTAL };
+  if (!sudah) o.s.getRange(o.r, 5, 1, 6).setValues([['SELESAI', JSON.stringify(j), Number(o.v[6]), o.v[7], o.v[8] || '', skor]]);
+  try {
+    sh('Hasil').appendRow([new Date(mulai), new Date(now), Math.round((now - mulai) / 600) / 100, o.v[1], o.v[0], o.v[2], r.a, r.b, r.c, skor, nl, Number(o.v[6]), st, o.v[8] || '']);
+    const det = sh('Jawaban_Detail'), ts = new Date();
+    const rows = r.d.map(x => [ts, o.v[0], o.v[1], x[0], x[1], x[2], x[3]]);
+    det.getRange(det.getLastRow() + 1, 1, rows.length, 7).setValues(rows);
+  } catch (e) {}
+  return skor;
 }
